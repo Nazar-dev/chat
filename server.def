@@ -1,19 +1,49 @@
-import socket
-
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-server_socket.bind(('192.168.0.255', 8909))
-
-print("Server online > 192.168.0.255")
-
-clients = []
-
+import time, socket, sys
+print('Setup Server...')
+time.sleep(1)
+#Get the hostname, IP Address from socket and set Port
+soc = socket.socket()
+host_name = socket.gethostname()
+ip = socket.gethostbyname(host_name)
+port = 27000
+soc.bind((host_name, port))
+print(host_name, '({})'.format(ip))
+name = input('Enter name: ')
+soc.listen(1) #Try to locate using socket
+print('Waiting for incoming connections...')
+connection, addr = soc.accept()
+print("Received connection from ", addr[0], "(", addr[1], ")\n")
+print('Connection Established. Connected From: {}, ({})'.format(addr[0], addr[0]))
+#get a connection from client side
+client_name = connection.recv(1024)
+client_name = client_name.decode()
+print(client_name + ' has connected.')                       
+print('Press [bye] to leave the chat room')
+connection.send(name.encode())
 while True:
-    data,addr = server_socket.recvfrom(1024)
-
-    if addr not in clients:
-        clients.append(addr)
-    
-    print(data.decode("utf-8"))
-    for client in clients:
-        server_socket.sendto(data, client)
-server_socket.close()
+   message = input('Me > ')
+   if message == '[bye]':
+      message = 'Good Night...'
+      connection.send(message.encode())
+      print("\n")
+      break
+   res = input("""Please choose:
+      1 = Code, 2 - Don't code:  """)
+   if res == '1':
+    alphabet = 'abcdefghijklmnopqrstuvwxyza01234567890'
+    crypt = ''
+    for i in range(len(message)):
+     for j in range(len(alphabet)):
+      if alphabet[j]== message[i]:
+        crypt += alphabet[j+1]
+        break
+        if message[i] == ' ' or message[i] == ',':
+         crypt += message[i]
+         break  
+    message  = crypt
+    connection.send(message.encode())
+   elif res == '2':
+    connection.send(message.encode())
+   message = connection.recv(1024)
+   message = message.decode()
+   print(client_name,">",message)
