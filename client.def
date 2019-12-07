@@ -30,20 +30,20 @@ while True:
       soc.send(message.encode())
       print("\n")
       break
-   res = input("""Please choose:
+   code = input("""Please choose:
       1 = Code, 2 - Don't code:  """)
-   if res == '1':
-    alphabet = 'abcdefghijklmnopqrstuvwxyza01234567890'
-    crypt = ''
-    for i in range(len(message)):
-     for j in range(len(alphabet)):
-      if alphabet[j] == message[i]:
-        crypt += alphabet[j+1]
-        break
-        if message[i] == ' ' or message[i] == ',':
-         crypt += message[i]
-         break 
+   if code == '1':
+      key = 'abcdefghijklmnopqrstuvwxyza01234567890'
+      crypt = ''
+      for i in range(len(message)):
+         for j in range(len(key)):
+            if key[j] == message[i]:
+               crypt += key[j+1]
+               break
+            if message[i] == ' ' or message[i] == ',':
+               crypt += message[i]
+               break
       message  = crypt
       soc.send(message.encode())
-   elif res == '2':
+   elif code == '2':
       soc.send(message.encode())
